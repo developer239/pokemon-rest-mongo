@@ -9,6 +9,8 @@ import { useContainer } from 'class-validator'
 import { AppModule } from 'src/app.module'
 import { appConfig, AppConfigType } from 'src/config/app.config'
 
+import 'src/modules/database/seeds/run-seed'
+
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,

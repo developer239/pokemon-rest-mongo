@@ -1,13 +1,20 @@
 /* eslint-disable no-await-in-loop */
 import { NestFactory } from '@nestjs/core'
 import { getConnectionToken } from '@nestjs/mongoose'
+import {
+  FastifyAdapter,
+  NestFastifyApplication,
+} from '@nestjs/platform-fastify'
 import { Connection } from 'mongoose'
 import { AuthSeedService } from 'src/modules/database/seeds/auth/auth-seed.service'
 import { PokemonSeedService } from 'src/modules/database/seeds/pokemon/pokemon-seed.service'
 import { SeedModule } from 'src/modules/database/seeds/seeed.module'
 
 const runSeed = async () => {
-  const app = await NestFactory.create(SeedModule)
+  const app = await NestFactory.create<NestFastifyApplication>(
+    SeedModule,
+    new FastifyAdapter()
+  )
 
   const connection = app.get<Connection>(getConnectionToken())
   const collections = await connection.db.collections()
