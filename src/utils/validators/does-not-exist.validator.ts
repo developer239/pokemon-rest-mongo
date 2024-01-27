@@ -1,11 +1,11 @@
-import { HttpException, Injectable } from '@nestjs/common'
-import { InjectDataSource } from '@nestjs/typeorm'
+import { Injectable } from '@nestjs/common'
+import { InjectModel } from '@nestjs/mongoose'
 import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
+  ValidationArguments,
 } from 'class-validator'
-import { ValidationArguments } from 'class-validator/types/validation/ValidationArguments'
-import { DataSource } from 'typeorm'
+import { Model } from 'mongoose'
 
 type ValidationEntity =
   | {
@@ -16,23 +16,32 @@ type ValidationEntity =
 @Injectable()
 @ValidatorConstraint({ name: 'DoesNotExist', async: true })
 export class DoesNotExist implements ValidatorConstraintInterface {
-  constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
+  constructor(
+    @InjectModel('User') private readonly userModel: Model<ValidationEntity>
+  ) {}
 
-  async validate(value: string, validationArguments: ValidationArguments) {
-    const repository = validationArguments.constraints[0] as string
+  async validate(
+    value: string,
+    validationArguments: ValidationArguments
+  ): Promise<boolean> {
     const currentValue = validationArguments.object as ValidationEntity
-    const entity = (await this.dataSource.getRepository(repository).findOne({
-      where: {
+
+    const entity = await this.userModel
+      .findOne({
         [validationArguments.property]: value,
-      },
-    })) as ValidationEntity
+      })
+      .exec()
 
-    const isNotExist = entity?.id === currentValue?.id || !entity
-
-    if (!isNotExist) {
-      throw new HttpException('Entity already exists', 422)
+    // If the entity exists and the id is not the same as the current value's id, return false
+    if (entity && String(entity.id) !== String(currentValue?.id)) {
+      return false
     }
 
-    return isNotExist
+    // If the entity does not exist or the id is the same, return true
+    return true
+  }
+
+  defaultMessage(validationArguments?: ValidationArguments): string {
+    return `${validationArguments?.property} already exists`
   }
 }

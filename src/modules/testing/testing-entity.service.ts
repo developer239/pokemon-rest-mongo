@@ -1,56 +1,16 @@
-/* eslint-disable security/detect-object-injection */
 import { Injectable } from '@nestjs/common'
-import { InjectDataSource } from '@nestjs/typeorm'
-import { EntityTarget } from 'typeorm'
-import { DataSource } from 'typeorm/data-source/DataSource'
-import { BaseEntity } from 'src/utils/base.entity'
-
-type IConstructorOf<TEntity> = new () => TEntity
+import { Model } from 'mongoose'
 
 @Injectable()
 export class TestingEntityService {
-  constructor(@InjectDataSource() protected dataSource: DataSource) {}
-
-  public async saveFixture<TEntity extends BaseEntity, TData>(
-    model: IConstructorOf<TEntity>,
-    data?: TData
+  public async saveFixture<TEntity, TData>(
+    model: Model<TEntity>,
+    data: TData
   ): Promise<TEntity> {
-    const instance = new model()
+    const instance = new model(data)
 
-    if (data) {
-      const keys = Object.keys(data)
-      for (const key of keys) {
-        instance[key] = data[key]
-      }
-    }
+    await instance.save()
 
-    const result = await instance.save()
-
-    // select entity from DB because of class-transformer
-    const entity = await this.dataSource.manager.findOne<TEntity>(model, {
-      where: {
-        // @ts-ignore
-        id: result.id,
-      },
-    })!
-
-    return entity!
-  }
-
-  public findOneById<TEntity extends EntityTarget<{ id: number }>>(
-    entity: TEntity,
-    id: number
-  ) {
-    return this.dataSource.manager.findOne(entity, {
-      where: {
-        id,
-      },
-    })
-  }
-
-  public list<TEntity extends BaseEntity>(
-    entityClass: string
-  ): Promise<TEntity[]> {
-    return this.dataSource.manager.find<TEntity>(entityClass)
+    return instance.toObject() as TEntity
   }
 }

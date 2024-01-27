@@ -1,13 +1,21 @@
 import { Module } from '@nestjs/common'
-import { TypeOrmModule } from '@nestjs/typeorm'
+import { MongooseModule } from '@nestjs/mongoose'
 import { PokemonController } from 'src/modules/pokemon/controllers/pokemon.controller'
-import { Attack } from 'src/modules/pokemon/entities/attack.entity'
-import { EvolutionRequirement } from 'src/modules/pokemon/entities/evolution-requirement.enity'
-import { Pokemon } from 'src/modules/pokemon/entities/pokemon.entity'
+import {
+  Pokemon,
+  PokemonSchema,
+} from 'src/modules/pokemon/schemas/pokemon.schema'
 import { PokemonService } from 'src/modules/pokemon/services/pokemon.service'
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Pokemon, Attack, EvolutionRequirement])],
+  imports: [
+    MongooseModule.forFeature([
+      {
+        name: Pokemon.name,
+        schema: PokemonSchema,
+      },
+    ]),
+  ],
   controllers: [PokemonController],
   providers: [PokemonService],
   exports: [PokemonService],

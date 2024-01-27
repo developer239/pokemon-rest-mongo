@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsEnum, IsInt, IsNotEmpty, IsString } from 'class-validator'
-import { AttackCategory } from 'src/modules/pokemon/entities/attack.entity'
+import { AttackCategory } from 'src/modules/pokemon/schemas/pokemon.schema'
 
 export class Attack {
   @ApiProperty()

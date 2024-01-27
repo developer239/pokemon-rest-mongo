@@ -2,31 +2,31 @@ version: '3.8'
 name: pokemon-api
 
 services:
-  database:
-    image: postgres:16-alpine
-    container_name: ${COMPOSE_PROJECT_NAME}-database
+  mongodb:
+    image: mongo:latest
+    container_name: pokemon-api-mongodb
     environment:
-      POSTGRES_DB: api_db
-      POSTGRES_USER: ${DATABASE_USER}
-      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
-    volumes:
-      - ./.db/data:/var/lib/postgresql/data
-      - ./.db/init:/docker-entrypoint-initdb.d
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     ports:
-      - '5432:5432'
-
+      - '27017:27017'
+    volumes:
+      - mongodb_data:/data/db
   app:
     build:
       context: .
       dockerfile: Dockerfile
       target: production
-    container_name: ${COMPOSE_PROJECT_NAME}-app
+    container_name: pokemon-api-app
     depends_on:
-      - database
+      - mongodb
     environment:
-      DATABASE_URL: postgres://${DATABASE_USER}:${DATABASE_PASSWORD}@database:5432/api_db
+      MONGODB_URI: mongodb://${MONGO_INITDB_ROOT_USERNAME}:${MONGO_INITDB_ROOT_PASSWORD}@mongodb:27017/pokemon_api
       PORT: 8080
     env_file:
       - .env.template
     ports:
       - '8080:8080'
+
+volumes:
+  mongodb_data:

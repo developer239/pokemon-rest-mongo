@@ -1,27 +1,29 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
-import { InjectRepository } from '@nestjs/typeorm'
+import { InjectModel } from '@nestjs/mongoose'
 import * as bcrypt from 'bcrypt'
-import { Repository } from 'typeorm'
+import { Model } from 'mongoose'
 import { EmailRegisterRequest } from 'src/modules/auth/dto/email-register.dto'
-import { User } from 'src/modules/auth/entities/user.entity'
+import { User, UserDocument } from 'src/modules/auth/schemas/user.schema'
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
-    @InjectRepository(User)
-    private readonly usersRepository: Repository<User>
+    @InjectModel(User.name) private readonly userModel: Model<UserDocument>
   ) {}
 
   async validateUserByEmailPassword(
     email: string,
     password: string
-  ): Promise<User | null> {
-    const user = await this.usersRepository.findOneBy({ email })
+  ): Promise<UserDocument | null> {
+    const user = await this.userModel
+      .findOne({ email })
+      .select('+password')
+      .exec()
 
     if (user) {
-      const isValidPassword = await bcrypt.compare(password, user?.password)
+      const isValidPassword = await bcrypt.compare(password, user.password)
       if (isValidPassword) {
         return user
       }
@@ -30,8 +32,8 @@ export class AuthService {
     return null
   }
 
-  async validateUserById(userId: number) {
-    const user = await this.usersRepository.findOneBy({ id: userId })
+  async validateUserById(userId: string) {
+    const user = await this.userModel.findById(userId).exec()
 
     if (!user) {
       throw new UnauthorizedException()
@@ -40,10 +42,10 @@ export class AuthService {
     return user
   }
 
-  login(user: User) {
-    const token = this.jwtService.sign({
-      id: user.id,
-    })
+  login(user: UserDocument) {
+    // eslint-disable-next-line no-underscore-dangle
+    const payload = { id: user._id }
+    const token = this.jwtService.sign(payload)
 
     return {
       accessToken: token,
@@ -52,8 +54,9 @@ export class AuthService {
   }
 
   async register(input: EmailRegisterRequest) {
-    const user = this.usersRepository.create(input)
-    await this.usersRepository.save(user)
+    const createdUser = new this.userModel(input)
+
+    const user = await createdUser.save()
 
     return this.login(user)
   }

@@ -14,7 +14,7 @@ import {
   EmailLoginRequest,
   EmailLoginResponse,
 } from 'src/modules/auth/dto/email-login.dto'
-import { User } from 'src/modules/auth/entities/user.entity'
+import { UserDocument } from 'src/modules/auth/schemas/user.schema'
 import { AuthService } from 'src/modules/auth/services/auth.service'
 
 @ApiTags('Session')
@@ -34,7 +34,10 @@ export class SessionController {
   @ApiOkResponse({
     type: EmailLoginResponse,
   })
-  public login(@Body() _: EmailLoginRequest, @GetUserPayload() user: User) {
+  public login(
+    @Body() _: EmailLoginRequest,
+    @GetUserPayload() user: UserDocument
+  ) {
     return this.service.login(user)
   }
 }

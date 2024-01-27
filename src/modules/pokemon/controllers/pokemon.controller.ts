@@ -17,8 +17,8 @@ import {
 } from '@nestjs/swagger'
 import { Public } from 'src/modules/auth/decorators/public.decorator'
 import { GetUserPayload } from 'src/modules/auth/decorators/user.decorator'
-import { User } from 'src/modules/auth/entities/user.entity'
 import { OptionalAuthGuard } from 'src/modules/auth/guards/optional-auth.guard'
+import { UserDocument } from 'src/modules/auth/schemas/user.schema'
 import { ListPokemonsQuery } from 'src/modules/pokemon/dto/list-pokemons-query.dto'
 import { Pokemon } from 'src/modules/pokemon/dto/pokemon.dto'
 import { PokemonService } from 'src/modules/pokemon/services/pokemon.service'
@@ -42,7 +42,10 @@ export class PokemonController {
   @ApiForbiddenResponse({
     description: 'Only authenticated users can filter by "isFavorite".',
   })
-  findAll(@Query() query: ListPokemonsQuery, @GetUserPayload() user: User) {
+  findAll(
+    @Query() query: ListPokemonsQuery,
+    @GetUserPayload() user: UserDocument
+  ) {
     return this.pokemonService.findAll(query, user)
   }
 
@@ -62,7 +65,7 @@ export class PokemonController {
   @Get(':id')
   @ApiOkResponse({ type: Pokemon })
   @ApiNotFoundResponse({ description: 'Pokemon not found.' })
-  findById(@Param('id') id: number) {
+  findById(@Param('id') id: string) {
     return this.pokemonService.findById(id)
   }
 
@@ -72,7 +75,7 @@ export class PokemonController {
   @ApiOkResponse({ type: Pokemon })
   @ApiNotFoundResponse({ description: 'Pokemon not found.' })
   @ApiForbiddenResponse({ description: 'Forbidden.' })
-  addFavorite(@Param('id') id: number, @GetUserPayload() user: User) {
+  addFavorite(@Param('id') id: string, @GetUserPayload() user: UserDocument) {
     return this.pokemonService.addFavorite(id, user)
   }
 
@@ -82,7 +85,10 @@ export class PokemonController {
   @ApiOkResponse({ type: Pokemon })
   @ApiNotFoundResponse({ description: 'Pokemon not found.' })
   @ApiForbiddenResponse({ description: 'Forbidden.' })
-  removeFavorite(@Param('id') id: number, @GetUserPayload() user: User) {
+  removeFavorite(
+    @Param('id') id: string,
+    @GetUserPayload() user: UserDocument
+  ) {
     return this.pokemonService.removeFavorite(id, user)
   }
 }

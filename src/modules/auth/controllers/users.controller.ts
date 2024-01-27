@@ -11,7 +11,7 @@ import { GetUserPayload } from 'src/modules/auth/decorators/user.decorator'
 import { EmailLoginResponse } from 'src/modules/auth/dto/email-login.dto'
 import { EmailRegisterRequest } from 'src/modules/auth/dto/email-register.dto'
 import { Me } from 'src/modules/auth/dto/me.dto'
-import { User } from 'src/modules/auth/entities/user.entity'
+import { UserDocument } from 'src/modules/auth/schemas/user.schema'
 import { AuthService } from 'src/modules/auth/services/auth.service'
 
 @ApiTags('Users')
@@ -37,7 +37,7 @@ export class UsersController {
     type: Me,
   })
   @ApiForbiddenResponse({ description: 'Forbidden.' })
-  public me(@GetUserPayload() user: User) {
+  public me(@GetUserPayload() user: UserDocument) {
     return user
   }
 }

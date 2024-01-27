@@ -1,19 +1,17 @@
 import { Module } from '@nestjs/common'
-import { TypeOrmModule } from '@nestjs/typeorm'
-import { DataSource } from 'typeorm'
-import { TypeOrmConfigService } from 'src/modules/database/typeorm-config.service'
+import { ConfigService } from '@nestjs/config'
+import { MongooseModule } from '@nestjs/mongoose'
+import { DatabaseConfigType } from 'src/config/database.config'
 
 @Module({
   imports: [
-    TypeOrmModule.forRootAsync({
-      useClass: TypeOrmConfigService,
-      dataSourceFactory: async (options) => {
-        if (!options) {
-          throw new Error('No options provided to TypeOrmModule.forRootAsync')
+    MongooseModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        const dbConfig = configService.get<DatabaseConfigType>('database')
+        return {
+          uri: dbConfig!.mongodbUri,
         }
-
-        const dataSource = await new DataSource(options).initialize()
-        return dataSource
       },
     }),
   ],
