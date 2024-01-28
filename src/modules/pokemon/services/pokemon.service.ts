@@ -11,6 +11,7 @@ import {
   Pokemon,
   PokemonDocument,
 } from 'src/modules/pokemon/schemas/pokemon.schema'
+import { escapeRegex } from 'src/utils/escape-regex'
 
 @Injectable()
 export class PokemonService {
@@ -54,7 +55,11 @@ export class PokemonService {
   }
 
   async findByName(name: string): Promise<PokemonDocument> {
-    const pokemon = await this.pokemonModel.findOne({ name }).exec()
+    const pokemon = await this.pokemonModel
+      // resolved by escapeRegex
+      // eslint-disable-next-line security/detect-non-literal-regexp
+      .findOne({ name: new RegExp(escapeRegex(name), 'iu') })
+      .exec()
 
     if (!pokemon) {
       throw new NotFoundException('Pokemon not found')
@@ -73,11 +78,8 @@ export class PokemonService {
     return pokemon
   }
 
-  async findAllTypes(): Promise<string[]> {
-    const pokemons = await this.pokemonModel.find().select('types -_id').exec()
-    // eslint-disable-next-line id-length
-    const types = new Set(pokemons.flatMap((p) => p.types))
-    return Array.from(types).sort()
+  findAllTypes(): Promise<string[]> {
+    return this.pokemonModel.distinct('types').exec()
   }
 
   async findAll(
@@ -89,8 +91,9 @@ export class PokemonService {
     const filter: any = {}
 
     if (search) {
-      // eslint-disable-next-line require-unicode-regexp,security/detect-non-literal-regexp
-      filter.name = new RegExp(search, 'i')
+      // resolved by using escapeRegex
+      // eslint-disable-next-line security/detect-non-literal-regexp
+      filter.name = { $regex: new RegExp(escapeRegex(search), 'iu') }
     }
 
     if (type) {

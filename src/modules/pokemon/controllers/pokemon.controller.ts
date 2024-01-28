@@ -22,6 +22,7 @@ import { UserDocument } from 'src/modules/auth/schemas/user.schema'
 import { ListPokemonsQuery } from 'src/modules/pokemon/dto/list-pokemons-query.dto'
 import { Pokemon } from 'src/modules/pokemon/dto/pokemon.dto'
 import { PokemonService } from 'src/modules/pokemon/services/pokemon.service'
+import { IDParamDTO } from 'src/utils/dtos/id-param.dto'
 
 @ApiTags('Pokemon')
 @Controller({
@@ -65,8 +66,11 @@ export class PokemonController {
   @Get(':id')
   @ApiOkResponse({ type: Pokemon })
   @ApiNotFoundResponse({ description: 'Pokemon not found.' })
-  findById(@Param('id') id: string) {
-    return this.pokemonService.findById(id)
+  findById(
+    @Param()
+    params: IDParamDTO
+  ) {
+    return this.pokemonService.findById(params.id)
   }
 
   @UseGuards(AuthGuard('jwt'))
