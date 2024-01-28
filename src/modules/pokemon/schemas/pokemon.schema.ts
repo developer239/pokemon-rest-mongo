@@ -34,6 +34,8 @@ export type PokemonDocument = Pokemon & Document
   versionKey: false,
 })
 export class Pokemon {
+  _id: string
+
   @Prop({ unique: true })
   number: number
 
