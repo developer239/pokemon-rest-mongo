@@ -1,4 +1,3 @@
-/* eslint-disable no-invalid-this */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import * as bcrypt from 'bcrypt'
 import { Exclude } from 'class-transformer'
@@ -6,7 +5,16 @@ import mongoose, { Document } from 'mongoose'
 
 export type UserDocument = User & Document
 
-@Schema()
+@Schema({
+  versionKey: false,
+  toJSON: {
+    transform: (_, ret) => {
+      delete ret.password
+      delete ret.favoritePokemons
+      return ret
+    },
+  },
+})
 export class User {
   @Prop({ unique: true, required: false })
   email: string

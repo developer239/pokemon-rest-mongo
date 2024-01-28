@@ -8,5 +8,6 @@ module.exports = {
   rules: {
     'no-void': 1,
     'vitest/prefer-to-be': 0,
+    'no-invalid-this': 1
   },
 }

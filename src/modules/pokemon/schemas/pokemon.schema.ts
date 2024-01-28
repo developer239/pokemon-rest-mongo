@@ -30,7 +30,9 @@ export class EvolutionRequirement {
 
 export type PokemonDocument = Pokemon & Document
 
-@Schema()
+@Schema({
+  versionKey: false,
+})
 export class Pokemon {
   @Prop({ unique: true })
   number: number

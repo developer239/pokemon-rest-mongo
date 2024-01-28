@@ -7,7 +7,7 @@ class Base {
   @ApiProperty()
   @IsNotEmpty()
   @IsInt()
-  id: number
+  _id: string
 
   @ApiProperty()
   @IsNotEmpty()

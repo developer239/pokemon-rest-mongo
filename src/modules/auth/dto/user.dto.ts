@@ -4,7 +4,7 @@ import { IsNotEmpty } from 'class-validator'
 export class User {
   @ApiProperty()
   @IsNotEmpty()
-  readonly id: number
+  readonly _id: string
 
   @ApiProperty()
   @IsNotEmpty()
