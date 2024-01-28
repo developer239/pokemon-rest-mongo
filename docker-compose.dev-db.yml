@@ -2,7 +2,7 @@ name: pokemon-api
 
 services:
   mongodb:
-    image: mongo:latest
+    image: mongo:6.0.13
     container_name: pokemon-api-dev-mongodb
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
