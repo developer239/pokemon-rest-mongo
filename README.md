@@ -1,6 +1,8 @@
 # Pokemon API
 
-![master](https://github.com/developer239/pokemon-rest/actions/workflows/api-ci.yml/badge.svg)
+![master](https://github.com/developer239/pokemon-rest-mongo/actions/workflows/api-ci.yml/badge.svg)
+
+![preview](./preview.png)
 
 ## Table of Contents
 
@@ -21,7 +23,7 @@ docker-compose up
 
 1. Install dependencies: `make install` (the project uses [yarn](https://github.com/yarnpkg))
 2. Create local environment file: `cp .env.template .env`
-3. Run infrastructure `make infra` (`.db/init/init.sql` should automatically create `api_db` database)
+3. Run infrastructure `make infra`
 4. Run development server: `make develop`
 
 ## Development
@@ -35,11 +37,6 @@ docker-compose up
 ## Database
 
 - `make seed-database` - truncate all tables and seed database with initial data
-- `make migration-create name=<migration-name>` - create new empty migration file
-- `make migration-generate name=<migration-name>` - generate migration file based on the current schema diff
-- `make migration-run` - run all pending migrations
-- `make migration-revert` - revert last migration
-- `make schema-drop` - drop all tables
 
 ```mermaid
 classDiagram
