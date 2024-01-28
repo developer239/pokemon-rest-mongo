@@ -43,59 +43,46 @@ docker-compose up
 
 ```mermaid
 classDiagram
-  direction BT
-  class attack {
-    varchar name
-    varchar type
-    attack_category_enum category
-    integer damage
-    integer id
+  class User {
+    string _id
+    string email
+    string password (hidden)
+    ObjectId[] favoritePokemons (references Pokemon)
   }
-  class evolution_requirement {
-    integer amount
-    varchar name
-    integer pokemonId
-    integer id
+  class Pokemon {
+    string _id
+    number number
+    string name
+    string classification
+    string[] types
+    string[] resistant
+    string[] weaknesses
+    object weightRange
+    object heightRange
+    number fleeRate
+    number maxCP
+    number maxHP
+    ObjectId[] favoritedBy (references User)
+    Attack[] attacks
+    EvolutionRequirement evolutionRequirements
+    ObjectId[] evolutions (references Pokemon)
   }
-  class pokemon {
-    integer number
-    varchar name
-    varchar classification
-    text types
-    text resistant
-    text weaknesses
-    numrange weightRange
-    numrange heightRange
-    double precision fleeRate
-    integer maxCP
-    integer maxHP
-    integer id
+  class Attack {
+    string name
+    string type
+    AttackCategory category
+    number damage
   }
-  class pokemon_attacks_attack {
-    integer pokemonId
-    integer attackId
-  }
-  class pokemon_evolutions_pokemon {
-    integer pokemonId_1
-    integer pokemonId_2
-  }
-  class user {
-    varchar email
-    varchar password
-    integer id
-  }
-  class user_favorite_pokemons_pokemon {
-    integer userId
-    integer pokemonId
+  class EvolutionRequirement {
+    number amount
+    string name
   }
 
-  evolution_requirement  -->  pokemon : pokemonId_id
-  pokemon_attacks_attack  -->  attack : attackId_id
-  pokemon_attacks_attack  -->  pokemon : pokemonId_id
-  pokemon_evolutions_pokemon  -->  pokemon : pokemonId_2_id
-  pokemon_evolutions_pokemon  -->  pokemon : pokemonId_1_id
-  user_favorite_pokemons_pokemon  -->  pokemon : pokemonId_id
-  user_favorite_pokemons_pokemon  -->  user : userId_id
+  User "1" *-- "*" Pokemon : favoritePokemons
+  Pokemon "1" *-- "*" Attack : attacks
+  Pokemon "1" *-- "1" EvolutionRequirement : evolutionRequirements
+  Pokemon "1" *-- "*" Pokemon : evolutions
+  Pokemon "1" *-- "*" User : favoritedBy
 ```
 
 ## Testing
