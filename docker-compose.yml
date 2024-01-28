@@ -1,10 +1,10 @@
 version: '3.8'
-name: pokemon-api
+name: pokemon-api-rest-mongo-dev
 
 services:
   mongodb:
     image: mongo:6.0.13
-    container_name: pokemon-api-mongodb
+    container_name: ${COMPOSE_PROJECT_NAME}-mongodb
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
@@ -15,7 +15,7 @@ services:
       context: .
       dockerfile: Dockerfile
       target: production
-    container_name: ${COMPOSE_PROJECT_NAME}-app-rest-mongo
+    container_name: ${COMPOSE_PROJECT_NAME}-app
     depends_on:
       - mongodb
     environment:

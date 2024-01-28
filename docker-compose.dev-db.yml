@@ -1,15 +1,14 @@
-name: pokemon-api
+version: '3.8'
+name: pokemon-api-rest-mongo-dev
 
 services:
   mongodb:
     image: mongo:6.0.13
-    container_name: pokemon-api-dev-mongodb
+    container_name: ${COMPOSE_PROJECT_NAME}-mongodb
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     ports:
       - '27017:27017'
-    volumes:
-      - mongodb_data_dev:/data/db
 volumes:
   mongodb_data_dev:
