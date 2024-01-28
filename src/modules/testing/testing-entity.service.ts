@@ -12,7 +12,6 @@ export class TestingEntityService {
     await instance.save()
 
     const result = instance.toObject()
-    // TODO: resolve typescript errors
     // @ts-ignore
     result._id = result._id.toString()
 

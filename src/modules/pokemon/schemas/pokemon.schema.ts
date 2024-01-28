@@ -39,13 +39,13 @@ export class Pokemon {
   @Prop({ unique: true })
   number: number
 
-  @Prop()
+  @Prop({ index: true })
   name: string
 
   @Prop()
   classification: string
 
-  @Prop([String])
+  @Prop({ index: true, type: [String] })
   types: string[]
 
   @Prop([String])
