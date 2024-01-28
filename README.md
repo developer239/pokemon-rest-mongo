@@ -62,7 +62,7 @@ classDiagram
     ObjectId[] favoritedBy (references User)
     Attack[] attacks
     EvolutionRequirement evolutionRequirements
-    ObjectId[] evolutions (references Pokemon)
+    Evolution[] evolutions
   }
   class Attack {
     string name
@@ -74,11 +74,15 @@ classDiagram
     number amount
     string name
   }
+  class Evolution {
+    string name
+    number number
+  }
 
   User "1" *-- "*" Pokemon : favoritePokemons
   Pokemon "1" *-- "*" Attack : attacks
   Pokemon "1" *-- "1" EvolutionRequirement : evolutionRequirements
-  Pokemon "1" *-- "*" Pokemon : evolutions
+  Pokemon "1" *-- "1" Evolution : evolutions
   Pokemon "1" *-- "*" User : favoritedBy
 ```
 

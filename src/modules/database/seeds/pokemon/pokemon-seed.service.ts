@@ -61,8 +61,7 @@ export class PokemonSeedService implements ISeedService {
   async run() {
     const rawPokemons = this.loadRawPokemons()
 
-    const pokemons = await this.insertPokemons(rawPokemons)
-    await this.linkEvolutions(rawPokemons, pokemons)
+    await this.insertPokemons(rawPokemons)
   }
 
   private loadRawPokemons(): IRawPokemon[] {
@@ -95,40 +94,20 @@ export class PokemonSeedService implements ISeedService {
         maxHP: rawPokemon.maxHP,
         attacks: [...rawPokemon.attacks.fast, ...rawPokemon.attacks.special],
         evolutionRequirements: rawPokemon.evolutionRequirements,
+        evolutions: [
+          ...(rawPokemon['Previous evolution(s)']?.map((item) => ({
+            name: item.name,
+            number: parseInt(item.id, 10),
+          })) || []),
+          ...(rawPokemon.evolutions?.map((item) => ({
+            name: item.name,
+            number: parseInt(item.id, 10),
+          })) || []),
+        ],
       })
       return pokemon.save()
     })
 
     return Promise.all(pokemons)
-  }
-
-  private async linkEvolutions(
-    rawPokemons: IRawPokemon[],
-    newlyInsertedPokemons: PokemonDocument[]
-  ) {
-    const pokemonsWithEvolutionsPromises = rawPokemons.map(
-      async (rawPokemon) => {
-        const pokemon = newlyInsertedPokemons.find(
-          (item) => item.number === parseInt(rawPokemon.id, 10)
-        )!
-
-        const evolutions =
-          (rawPokemon.evolutions
-            ?.map((evolution) =>
-              newlyInsertedPokemons.find(
-                (item) => item.number === parseInt(evolution.id, 10)
-              )
-            )
-            .filter((item) => item) as PokemonDocument[]) || []
-
-        if (evolutions) {
-          pokemon.evolutions = evolutions.map((evolution) => evolution._id)
-        }
-
-        await pokemon.save()
-      }
-    )
-
-    await Promise.all(pokemonsWithEvolutionsPromises)
   }
 }

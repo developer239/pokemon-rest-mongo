@@ -28,6 +28,14 @@ export class EvolutionRequirement {
   name: string
 }
 
+export class Evolution {
+  @Prop()
+  name: number
+
+  @Prop()
+  number: number
+}
+
 export type PokemonDocument = Pokemon & Document
 
 @Schema({
@@ -88,8 +96,8 @@ export class Pokemon {
   @Prop(EvolutionRequirement)
   evolutionRequirements: EvolutionRequirement
 
-  @Prop({ type: [{ type: Types.ObjectId, ref: 'Pokemon' }] })
-  evolutions: Types.ObjectId[]
+  @Prop([Evolution])
+  evolutions: Evolution[]
 }
 
 export const PokemonSchema = SchemaFactory.createForClass(Pokemon)

@@ -1,9 +1,21 @@
-import { ApiProperty, IntersectionType } from '@nestjs/swagger'
+import { ApiProperty } from '@nestjs/swagger'
 import { IsArray, IsInt, IsNotEmpty, IsNumber, IsString } from 'class-validator'
 import { Attack } from 'src/modules/pokemon/dto/attack.dto'
 import { EvolutionRequirement } from 'src/modules/pokemon/dto/evolution-requirement.dto'
 
-class Base {
+export class Evolution {
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
+  name: string
+
+  @ApiProperty()
+  @IsNotEmpty()
+  @IsInt()
+  number: number
+}
+
+export class Pokemon {
   @ApiProperty()
   @IsNotEmpty()
   @IsInt()
@@ -59,11 +71,7 @@ class Base {
 
   @ApiProperty({ type: EvolutionRequirement, required: false })
   evolutionRequirements: EvolutionRequirement
-}
 
-export class Evolution extends IntersectionType(Base) {}
-
-export class Pokemon extends IntersectionType(Base) {
   @ApiProperty({
     type: [Evolution],
   })
