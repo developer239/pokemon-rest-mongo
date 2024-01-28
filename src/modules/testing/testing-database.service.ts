@@ -13,4 +13,8 @@ export class TestingDatabaseService {
       await collection.deleteMany({})
     }
   }
+
+  async closeConnection(): Promise<void> {
+    await this.connection.close()
+  }
 }

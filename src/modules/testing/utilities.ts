@@ -1,11 +1,7 @@
-import {
-  ClassSerializerInterceptor,
-  ValidationPipe,
-  VersioningType,
-} from '@nestjs/common'
+import { ValidationPipe, VersioningType } from '@nestjs/common'
 import { ModuleMetadata } from '@nestjs/common/interfaces'
 import { ConfigModule, ConfigService } from '@nestjs/config'
-import { APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core'
+import { APP_PIPE } from '@nestjs/core'
 import {
   FastifyAdapter,
   NestFastifyApplication,
@@ -47,10 +43,6 @@ export const bootstrap = async (metadata: ModuleMetadata) => {
       {
         provide: APP_PIPE,
         useValue: new ValidationPipe(validationOptions),
-      },
-      {
-        provide: APP_INTERCEPTOR,
-        useClass: ClassSerializerInterceptor,
       },
     ],
     exports: [...(metadata?.exports ?? [])],

@@ -16,6 +16,8 @@ export type UserDocument = User & Document
   },
 })
 export class User {
+  _id: string
+
   @Prop({ unique: true, required: false })
   email: string
 
