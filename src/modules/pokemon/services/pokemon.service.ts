@@ -1,7 +1,7 @@
 import {
-  ForbiddenException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { Model } from 'mongoose'
@@ -102,7 +102,7 @@ export class PokemonService {
 
     if (isFavorite !== undefined) {
       if (!user) {
-        throw new ForbiddenException(
+        throw new UnauthorizedException(
           'Only authenticated users can filter by "isFavorite".'
         )
       }
