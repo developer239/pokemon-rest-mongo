@@ -43,7 +43,6 @@ export class AuthService {
   }
 
   login(user: UserDocument) {
-    // eslint-disable-next-line no-underscore-dangle
     const payload = { id: user._id }
     const token = this.jwtService.sign(payload)
 
